@@ -8,15 +8,21 @@ const ctx = canvas.getContext('2d');
 console.log(ctx);
 
 //the snake
-const snakeSize = 50;
-let snakeSpeed = 5;
+const snakeSize = 30;
+let snakeSpeed = snakeSize;
 let snakePosX = 0;
-let snakePosY = canvas.height / 2 - snakeSize / 2;
+let snakePosY = canvas.height / 2;
 
-//where on each axis is the snake now?
-// // 0,1, -1 >> 0 is snake "stopped", 1 is moves forward, -1 is move backward
 let velocityX = 1;
 let velocityY = 0;
+
+//food
+let foodPosX = 210;
+let foodPosY = 330;
+
+//grid tiles
+const tileCountX = canvas.width / snakeSize;
+const tileCountY = canvas.height / snakeSize;
 
 ///////////////////
 //snake move loop
@@ -32,28 +38,38 @@ function moveStuff() {
   snakePosX += snakeSpeed * velocityX;
   snakePosY += snakeSpeed * velocityY;
 
-  //rules for moving through the walls (entire snake fix with minus)
-  if (snakePosX > canvas.width) {
+  //wall collision
+  if (snakePosX > canvas.width - snakeSize) {
     snakePosX = 0;
   }
-  if (snakePosX < -snakeSize) {
+  if (snakePosX < 0) {
     snakePosX = canvas.width;
   }
-
-  if (snakePosY > canvas.height) {
+  if (snakePosY > canvas.height - snakeSize) {
     snakePosY = 0;
   }
-  if (snakePosY < -snakeSize) {
+  if (snakePosY < 0) {
     snakePosY = canvas.height;
+  }
+
+  //food collision
+  if (foodPosX === snakePosX && snakePosY === foodPosY) {
+    alert('Hey, food here!');
   }
 }
 
 function drawStuff() {
-  ////background rect
-  rectangle('#DCC9A0', 0, 0, canvas.width, canvas.height);
+  ////background
+  rectangle('#C9A0DC', 0, 0, canvas.width, canvas.height);
 
-  ////snake's position and dimensions
+  ////grid
+  drawGrid();
+
+  ////snake
   rectangle('#a0dcc9', snakePosX, snakePosY, snakeSize, snakeSize);
+
+  ////food
+  rectangle('fuchsia', foodPosX, foodPosY, snakeSize, snakeSize);
 }
 
 function rectangle(color, x, y, width, height) {
@@ -91,5 +107,20 @@ function keyPush(evt) {
         velocityY = 1;
       }
       break;
+  }
+}
+
+// //grid
+function drawGrid() {
+  for (let i = 0; i < tileCountX; i++) {
+    for (let j = 0; j < tileCountY; j++) {
+      rectangle(
+        '#fff',
+        snakeSize * i,
+        snakeSize * j,
+        snakeSize - 1,
+        snakeSize - 1,
+      );
+    }
   }
 }
