@@ -7,8 +7,15 @@ const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
 console.log(ctx);
 
+//game stuff
+const title = document.querySelector('.score');
+
+let score = 0;
+
+const fps = 10;
+
 //the snake
-const snakeSize = 30;
+const snakeSize = 50;
 let snakeSpeed = snakeSize;
 let snakePosX = 0;
 let snakePosY = canvas.height / 2;
@@ -17,8 +24,7 @@ let velocityX = 1;
 let velocityY = 0;
 
 //food
-let foodPosX = 210;
-let foodPosY = 330;
+let foodPosX, foodPosY;
 
 //grid tiles
 const tileCountX = canvas.width / snakeSize;
@@ -29,9 +35,12 @@ const tileCountY = canvas.height / snakeSize;
 function gameLoop() {
   moveStuff();
   drawStuff();
-  setTimeout(gameLoop, 1000 / 15); //framerate 15 frames per second
+  setTimeout(gameLoop, 1000 / fps); //framerate {fps} frames per second
 }
+
+//(run on startup)
 gameLoop();
+resetFood();
 
 function moveStuff() {
   //the snake moves
@@ -54,7 +63,9 @@ function moveStuff() {
 
   //food collision
   if (foodPosX === snakePosX && snakePosY === foodPosY) {
-    alert('Hey, food here!');
+    score++;
+    title.textContent = score;
+    resetFood();
   }
 }
 
@@ -123,4 +134,11 @@ function drawGrid() {
       );
     }
   }
+}
+
+//random food position
+function resetFood() {
+  foodPosX = Math.floor(Math.random() * tileCountX) * snakeSize;
+  foodPosY = Math.floor(Math.random() * tileCountY) * snakeSize;
+  //snakeSize - represents tile width
 }
